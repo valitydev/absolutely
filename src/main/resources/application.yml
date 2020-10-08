@@ -23,7 +23,7 @@ info:
 
 kafka:
   bootstrap-servers: kenny-kafka1.bst1.rbkmoney.net:9092
-  client-id: newway
+  client-id: absolutely
   ssl:
     enabled: false
     trust-store-location: "test"
@@ -34,7 +34,7 @@ kafka:
     key-store-type: PKCS12
     trust-store-type: PKCS12
   consumer:
-    group-id: "NewwayListener"
+    group-id: "AbsolutelyListener"
     enable-auto-commit: false
     auto-offset-reset: earliest
     max-poll-records: 20
