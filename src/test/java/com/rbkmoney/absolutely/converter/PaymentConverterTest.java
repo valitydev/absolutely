@@ -61,7 +61,7 @@ public class PaymentConverterTest {
         String paymentId = "1";
         Invoice invoice = buildBankCardPayerInvoice(paymentId);
 
-        Payment payment = paymentConverter.convert(invoice, paymentId);
+        Payment payment = (Payment) paymentConverter.convert(invoice, paymentId);
         assertEquals(invoice.getInvoice().getId(), payment.getInvoiceID());
         InvoiceDetails details = invoice.getInvoice().getDetails();
         assertEquals(details.getProduct(), payment.getInvoiceDetails().getProduct());

@@ -6,6 +6,7 @@ import com.rbkmoney.absolutely.utils.TimeUtils;
 import com.rbkmoney.damsel.domain.InvoicePaymentAdjustment;
 import com.rbkmoney.damsel.payment_processing.InvoicePayment;
 import com.rbkmoney.swag.adapter.abs.model.Adjustment;
+import com.rbkmoney.swag.adapter.abs.model.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AdjustmentConverter {
 
-    public Adjustment convert(com.rbkmoney.damsel.payment_processing.Invoice invoice, String paymentId, String adjustmentId) {
+    public Event convert(com.rbkmoney.damsel.payment_processing.Invoice invoice, String paymentId, String adjustmentId) {
         InvoicePayment invoicePayment = InvoiceUtils.extractPayment(invoice, paymentId);
         InvoicePaymentAdjustment adjustment = InvoiceUtils.extractAdjustment(invoicePayment, adjustmentId);
         var payment = invoicePayment.getPayment();

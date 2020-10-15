@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>swag-adapter-abs</artifactId>
-            <version>1.4-b24ed1c-client</version>
+            <version>1.5-ae84ac8-client</version>
         </dependency>
 
         <!--spring-->

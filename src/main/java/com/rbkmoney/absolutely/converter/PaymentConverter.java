@@ -25,7 +25,7 @@ public class PaymentConverter {
     private final InvoiceDetailsConverter invoiceDetailsConverter;
     private final TransactionInfoConverter transactionInfoConverter;
 
-    public Payment convert(com.rbkmoney.damsel.payment_processing.Invoice invoice, String paymentId) {
+    public Event convert(com.rbkmoney.damsel.payment_processing.Invoice invoice, String paymentId) {
         InvoicePayment invoicePayment = InvoiceUtils.extractPayment(invoice, paymentId);
         var payment = invoicePayment.getPayment();
         TransactionInfo transactionInfo = getTransactionInfo(invoicePayment.getSessions());
@@ -34,27 +34,27 @@ public class PaymentConverter {
 
         return new Payment()
                 .id(payment.getId())
-                .invoiceID(invoice.getInvoice().getId())
-                .createdAt(TimeUtils.toOffsetDateTime(payment.getCreatedAt()))
-                .domainRevision(payment.getDomainRevision())
-                .partyRevision(payment.getPartyRevision())
-                .partyID(payment.getOwnerId())
-                .shopID(payment.getShopId())
                 .flow(convertPaymentFlow(payment.getFlow()))
                 .status(Payment.StatusEnum.fromValue(status.getSetField().getFieldName()))
-                .amount(payment.getCost().getAmount())
-                .currency(payment.getCost().getCurrency().getSymbolicCode())
                 .fee(CashFlowUtils.getFee(fees))
                 .providerFee(CashFlowUtils.getProviderFee(fees))
                 .externalFee(CashFlowUtils.getExternalFee(fees))
                 .invoiceDetails(invoiceDetailsConverter.convert(invoice.getInvoice()))
                 .payer(paymentPayerConverter.convert(payment.getPayer()))
                 .makeRecurrent(payment.isSetMakeRecurrent() ? payment.isMakeRecurrent() : null)
-                .externalID(payment.getExternalId())
                 .riskScore(convertRiskScore())
                 .paymentRoute(convertPaymentRoute(invoicePayment.getRoute()))
                 .transactionInfo(transactionInfoConverter.convert(transactionInfo))
-                .error(status.isSetFailed() ? ErrorUtils.getError(status.getFailed().getFailure()) : null);
+                .error(status.isSetFailed() ? ErrorUtils.getError(status.getFailed().getFailure()) : null)
+                .invoiceID(invoice.getInvoice().getId())
+                .createdAt(TimeUtils.toOffsetDateTime(payment.getCreatedAt()))
+                .domainRevision(payment.getDomainRevision())
+                .partyRevision(payment.getPartyRevision())
+                .partyID(payment.getOwnerId())
+                .shopID(payment.getShopId())
+                .amount(payment.getCost().getAmount())
+                .currency(payment.getCost().getCurrency().getSymbolicCode())
+                .externalID(payment.getExternalId());
     }
 
     private PaymentFlow convertPaymentFlow(InvoicePaymentFlow paymentflow) {

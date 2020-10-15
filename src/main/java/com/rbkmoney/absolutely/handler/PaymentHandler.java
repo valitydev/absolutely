@@ -3,18 +3,15 @@ package com.rbkmoney.absolutely.handler;
 import com.rbkmoney.absolutely.converter.PaymentConverter;
 import com.rbkmoney.damsel.payment_processing.Invoice;
 import com.rbkmoney.damsel.payment_processing.InvoiceChange;
-import com.rbkmoney.swag.adapter.abs.ApiClient;
-import com.rbkmoney.swag.adapter.abs.api.AbsApi;
-import com.rbkmoney.swag.adapter.abs.model.Payment;
+import com.rbkmoney.swag.adapter.abs.model.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class PaymentHandler implements Handler<InvoiceChange, Invoice>  {
+public class PaymentHandler implements Handler  {
 
     private final PaymentConverter paymentConverter;
-    private final AbsApi absApi;
 
     @Override
     public boolean accept(InvoiceChange change) {
@@ -26,9 +23,7 @@ public class PaymentHandler implements Handler<InvoiceChange, Invoice>  {
     }
 
     @Override
-    public void handle(Invoice source, InvoiceChange change) {
-        Payment payment = paymentConverter.convert(source, change.getInvoicePaymentChange().getId());
-        absApi.payments(List);
+    public Event handle(Invoice source, InvoiceChange change) {
+        return paymentConverter.convert(source, change.getInvoicePaymentChange().getId());
     }
-
 }

@@ -1,7 +1,6 @@
 package com.rbkmoney.absolutely.converter;
 
 import com.rbkmoney.damsel.domain.Invoice;
-import com.rbkmoney.damsel.domain.InvoiceDetails;
 import com.rbkmoney.swag.adapter.abs.model.InvoiceCart;
 import com.rbkmoney.swag.adapter.abs.model.InvoiceLine;
 import lombok.RequiredArgsConstructor;
