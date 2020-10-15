@@ -45,3 +45,8 @@ kafka:
     invoice:
       id: mg-invoice-100-2
       enabled: false
+
+service:
+  invoicing:
+    url: http://hellgate:8022/v1/processing/invoicing
+    networkTimeout: 5000

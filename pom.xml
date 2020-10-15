@@ -27,7 +27,7 @@
         <shared.resources.version>0.3.8</shared.resources.version>
         <sink-common-lib.version>0.0.7</sink-common-lib.version>
         <kafka-common-lib.version>0.1.7</kafka-common-lib.version>
-        <damsel.version>1.446-38bdfd5</damsel.version>
+        <damsel.version>1.452-efca058</damsel.version>
     </properties>
 
     <dependencies>
@@ -66,6 +66,11 @@
             <groupId>com.rbkmoney</groupId>
             <artifactId>damsel</artifactId>
             <version>${damsel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>swag-adapter-abs</artifactId>
+            <version>1.4-b24ed1c-client</version>
         </dependency>
 
         <!--spring-->
