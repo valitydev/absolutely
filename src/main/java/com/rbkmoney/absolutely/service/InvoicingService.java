@@ -28,11 +28,14 @@ public class InvoicingService {
             eventPayload.getInvoiceChanges().forEach(invoiceChange ->
                     handlers.stream().filter(h -> h.accept(invoiceChange)).findFirst().ifPresent(handler -> {
                             Invoice invoice = hgService.get(e.getSourceId(), e.getEventId());
-                            Event event = handler.handle(invoice, invoiceChange);
-                            events.add(event);
+                        Event event = handler.handle(invoice, invoiceChange.getInvoicePaymentChange());
+                        events.add(event);
                     }));
         });
-        absApi.events(events);
+
+        if (!events.isEmpty()) {
+            absApi.events(events);
+        }
     }
 
 }

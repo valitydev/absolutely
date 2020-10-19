@@ -1,28 +1,12 @@
 package com.rbkmoney.absolutely.converter;
 
 import com.rbkmoney.absolutely.AbsolutelyApplication;
-import com.rbkmoney.damsel.base.Content;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.damsel.domain.BankCardPaymentSystem;
-import com.rbkmoney.damsel.domain.BankCardTokenProvider;
-import com.rbkmoney.damsel.domain.Cash;
-import com.rbkmoney.damsel.domain.ClientInfo;
-import com.rbkmoney.damsel.domain.ContactInfo;
-import com.rbkmoney.damsel.domain.CustomerPayer;
-import com.rbkmoney.damsel.domain.DisposablePaymentResource;
-import com.rbkmoney.damsel.domain.InvoiceCart;
 import com.rbkmoney.damsel.domain.InvoiceDetails;
-import com.rbkmoney.damsel.domain.InvoiceLine;
 import com.rbkmoney.damsel.domain.Payer;
-import com.rbkmoney.damsel.domain.PaymentResourcePayer;
-import com.rbkmoney.damsel.domain.PaymentRoute;
 import com.rbkmoney.damsel.domain.PaymentTool;
-import com.rbkmoney.damsel.domain.RecurrentParentPayment;
-import com.rbkmoney.damsel.domain.RecurrentPayer;
 import com.rbkmoney.damsel.domain.TransactionInfo;
 import com.rbkmoney.damsel.payment_processing.Invoice;
 import com.rbkmoney.damsel.payment_processing.InvoicePayment;
-import com.rbkmoney.damsel.payment_processing.InvoicePaymentSession;
 import com.rbkmoney.swag.adapter.abs.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -32,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -54,7 +37,7 @@ public class PaymentConverterTest {
     public void convertTest() {
 
         String paymentId = "1";
-        Invoice invoice = buildBankCardPayerInvoice(paymentId);
+        Invoice invoice = TestData.buildInvoicePayment(paymentId);
 
         Payment payment = (Payment) paymentConverter.convert(invoice, paymentId);
         assertEquals(invoice.getInvoice().getId(), payment.getInvoiceID());
@@ -97,7 +80,7 @@ public class PaymentConverterTest {
 
     @Test
     public void paymentPayerConverterTest() {
-        Payer sourcePayer = buildPaymentResourcePayer(buildPaymentToolBankCard());
+        Payer sourcePayer = TestData.buildPaymentResourcePayer(TestData.buildPaymentToolBankCard());
         var payer = paymentPayerConverter.convert(sourcePayer);
         var paymentResourcePayer = (com.rbkmoney.swag.adapter.abs.model.PaymentResourcePayer) payer;
         assertEquals(sourcePayer.getPaymentResource().getContactInfo().getEmail(), paymentResourcePayer.getContactInfo().getEmail());
@@ -118,7 +101,7 @@ public class PaymentConverterTest {
 
     @Test
     public void paymentPayerConverterCustomerTest() {
-        Payer sourcePayer = buildCustomerPayer(buildPaymentToolDigitalWallet());
+        Payer sourcePayer = TestData.buildCustomerPayer(TestData.buildPaymentToolDigitalWallet());
         var payer = paymentPayerConverter.convert(sourcePayer);
         var customerPayer = (com.rbkmoney.swag.adapter.abs.model.CustomerPayer) payer;
         assertEquals(sourcePayer.getCustomer().getContactInfo().getPhoneNumber(), customerPayer.getContactInfo().getPhoneNumber());
@@ -134,7 +117,7 @@ public class PaymentConverterTest {
 
     @Test
     public void paymentPayerConverterRecurrntTest() {
-        Payer sourcePayer = buildRecurrentPayer(buildPaymentToolMobileCommerce());
+        Payer sourcePayer = TestData.buildRecurrentPayer(TestData.buildPaymentToolMobileCommerce());
         var payer = paymentPayerConverter.convert(sourcePayer);
         var recurrentPayer = (com.rbkmoney.swag.adapter.abs.model.RecurrentPayer) payer;
         assertEquals(sourcePayer.getRecurrent().getContactInfo().getPhoneNumber(), recurrentPayer.getContactInfo().getPhoneNumber());
@@ -151,105 +134,4 @@ public class PaymentConverterTest {
 
     }
 
-    private Invoice buildBankCardPayerInvoice(String paymentId) {
-        return new Invoice()
-                    .setInvoice(new com.rbkmoney.damsel.domain.Invoice()
-                            .setId("invoice_id_444")
-                            .setDetails(new InvoiceDetails()
-                                    .setProduct("product_kek")
-                                    .setDescription("description_lol")
-                                    .setCart(new InvoiceCart()
-                                            .setLines(List.of(new InvoiceLine()
-                                                    .setPrice(new Cash().setAmount(133))
-                                                    .setProduct("line_product")
-                                                    .setQuantity(2)))))
-                            .setContext(new Content().setData("{\"paper\": \"A4\", \"count\": 5}".getBytes())))
-                    .setPayments(List.of(new InvoicePayment()
-                            .setPayment(new com.rbkmoney.damsel.domain.InvoicePayment()
-                                    .setId(paymentId)
-                                    .setCreatedAt("2016-03-22T06:12:27Z")
-                                    .setStatus(InvoicePaymentStatus.captured(new InvoicePaymentCaptured()))
-                                    .setCost(new Cash()
-                                            .setAmount(1245)
-                                            .setCurrency(new CurrencyRef()
-                                                    .setSymbolicCode("RUB")))
-                                    .setDomainRevision(3)
-                                    .setFlow(InvoicePaymentFlow.hold(new InvoicePaymentFlowHold()
-                                            .setHeldUntil("2016-03-22T06:12:27Z")
-                                            .setOnHoldExpiration(OnHoldExpiration.cancel)))
-                                    .setPayer(buildRecurrentPayer(buildPaymentToolMobileCommerce()))
-                                    .setPartyRevision(13)
-                                    .setOwnerId("party_id_33")
-                                    .setShopId("shop_id_88")
-                                    .setMakeRecurrent(true)
-                                    .setExternalId("45343262362362"))
-                            .setRoute(new PaymentRoute()
-                                    .setProvider(new ProviderRef(1))
-                                    .setTerminal(new TerminalRef(3)))
-                            .setSessions(List.of(new InvoicePaymentSession()
-                                    .setTransactionInfo(new TransactionInfo()
-                                            .setId("trx_id_t5")
-                                            .setAdditionalInfo(new AdditionalTransactionInfo()
-                                                    .setRrn("rrn555")))))));
-    }
-
-    private Payer buildPaymentResourcePayer(PaymentTool paymentTool) {
-        return Payer.payment_resource(new PaymentResourcePayer()
-                .setContactInfo(buildContactInfo())
-                .setResource(new DisposablePaymentResource()
-                        .setClientInfo(buildClientInfo())
-                        .setPaymentTool(paymentTool)));
-    }
-
-    private PaymentTool buildPaymentToolBankCard() {
-        return PaymentTool.bank_card(new BankCard()
-                .setToken("token_kek")
-                .setLastDigits("1245")
-                .setBin("458899")
-                .setPaymentSystem(BankCardPaymentSystem.amex)
-                .setTokenProvider(BankCardTokenProvider.applepay));
-    }
-
-    private PaymentTool buildPaymentToolMobileCommerce() {
-        return PaymentTool.mobile_commerce(new MobileCommerce()
-                .setPhone(new MobilePhone().setCc("8").setCtn("9087775544"))
-                .setOperator(MobileOperator.beeline));
-    }
-
-    private PaymentTool buildPaymentToolDigitalWallet() {
-        return PaymentTool.digital_wallet(new DigitalWallet()
-                .setId("dig_wal_1")
-                .setProvider(DigitalWalletProvider.qiwi)
-                .setToken("kekek_token"));
-    }
-
-    private ClientInfo buildClientInfo() {
-        return new ClientInfo()
-                .setIpAddress("127.0.0.1")
-                .setFingerprint("sdjfdvbserweirbi4b2");
-    }
-
-    private ContactInfo buildContactInfo() {
-        return new ContactInfo()
-                .setEmail("kek@kek.ru")
-                .setPhoneNumber("898889888483");
-    }
-
-    private Payer buildCustomerPayer(PaymentTool paymentTool) {
-        return Payer.customer(new CustomerPayer()
-                .setContactInfo(buildContactInfo())
-                .setCustomerBindingId("cust_bing_id")
-                .setCustomerId("cust_id")
-                .setRecPaymentToolId("ejjeje")
-                .setPaymentTool(paymentTool));
-    }
-
-    private Payer buildRecurrentPayer(PaymentTool paymentTool) {
-        return Payer.recurrent(new RecurrentPayer()
-                .setContactInfo(buildContactInfo())
-                .setRecurrentParent(new RecurrentParentPayment()
-                        .setInvoiceId("oinv_id")
-                        .setPaymentId("ppapa_id"))
-                .setPaymentTool(paymentTool));
-    }
 }

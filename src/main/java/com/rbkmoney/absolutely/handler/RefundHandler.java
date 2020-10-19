@@ -3,6 +3,7 @@ package com.rbkmoney.absolutely.handler;
 import com.rbkmoney.absolutely.converter.RefundConverter;
 import com.rbkmoney.damsel.payment_processing.Invoice;
 import com.rbkmoney.damsel.payment_processing.InvoiceChange;
+import com.rbkmoney.damsel.payment_processing.InvoicePaymentChange;
 import com.rbkmoney.swag.adapter.abs.model.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class RefundHandler implements Handler  {
     }
 
     @Override
-    public Event handle(Invoice source, InvoiceChange change) {
-        return refundConverter.convert(source, change.getInvoicePaymentChange().getId(), change.getInvoicePaymentChange().getPayload().getInvoicePaymentRefundChange().getId());
+    public Event handle(Invoice source, InvoicePaymentChange paymentChange) {
+        return refundConverter.convert(source, paymentChange.getId(), paymentChange.getPayload().getInvoicePaymentRefundChange().getId());
     }
 }

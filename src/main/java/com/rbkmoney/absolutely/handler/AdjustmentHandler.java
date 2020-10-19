@@ -3,6 +3,7 @@ package com.rbkmoney.absolutely.handler;
 import com.rbkmoney.absolutely.converter.AdjustmentConverter;
 import com.rbkmoney.damsel.payment_processing.Invoice;
 import com.rbkmoney.damsel.payment_processing.InvoiceChange;
+import com.rbkmoney.damsel.payment_processing.InvoicePaymentChange;
 import com.rbkmoney.swag.adapter.abs.model.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class AdjustmentHandler implements Handler  {
     }
 
     @Override
-    public Event handle(Invoice source, InvoiceChange change) {
-        return adjustmentConverter.convert(source, change.getInvoicePaymentChange().getId(), change.getInvoicePaymentChange().getPayload().getInvoicePaymentAdjustmentChange().getId());
+    public Event handle(Invoice source, InvoicePaymentChange paymentChange) {
+        return adjustmentConverter.convert(source, paymentChange.getId(),paymentChange.getPayload().getInvoicePaymentAdjustmentChange().getId());
     }
 }
