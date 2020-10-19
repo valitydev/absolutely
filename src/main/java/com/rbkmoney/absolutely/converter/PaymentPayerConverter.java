@@ -21,10 +21,6 @@ public class PaymentPayerConverter implements Converter<Payer, com.rbkmoney.swag
 
     @Override
     public com.rbkmoney.swag.adapter.abs.model.Payer convert(Payer payer) {
-        return convertPayer(payer);
-    }
-
-    private com.rbkmoney.swag.adapter.abs.model.Payer convertPayer(Payer payer) {
         if (payer.isSetPaymentResource()) {
             return convertPaymentResourcePayer(payer.getPaymentResource());
         } else if (payer.isSetCustomer()) {

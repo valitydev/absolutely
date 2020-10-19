@@ -12,6 +12,7 @@ import com.rbkmoney.damsel.payment_processing.InvoiceRefundSession;
 import com.rbkmoney.swag.adapter.abs.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class RefundConverter {
     }
 
     private TransactionInfo getTransactionInfo(List<InvoiceRefundSession> sessions) {
-        return sessions.size() > 0 ? sessions.get(sessions.size() - 1).getTransactionInfo() : null;
+        return !CollectionUtils.isEmpty(sessions) ? sessions.get(sessions.size() - 1).getTransactionInfo() : null;
     }
 
 }

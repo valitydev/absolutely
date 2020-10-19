@@ -19,9 +19,8 @@ public class CashFlowUtils {
                                     Collectors.summingLong(posting -> posting.getVolume().getAmount())
                             )
                     );
-        } else {
-            return Map.of();
         }
+        return Map.of();
     }
 
     public static FeeType getFeeType(FinalCashFlowPosting cashFlowPosting) {
@@ -64,14 +63,14 @@ public class CashFlowUtils {
         return fees != null ? fees.getOrDefault(FeeType.EXTERNAL_FEE, 0L) : 0L;
     }
 
-    public static Long computeMerchantAmount(List<FinalCashFlowPosting> finalCashFlow) {
-        long amountSource = computeAmount(finalCashFlow, FinalCashFlowPosting::getSource);
-        long amountDest = computeAmount(finalCashFlow, FinalCashFlowPosting::getDestination);
+    public static Long getMerchantAmount(List<FinalCashFlowPosting> finalCashFlow) {
+        long amountSource = getAmount(finalCashFlow, FinalCashFlowPosting::getSource);
+        long amountDest = getAmount(finalCashFlow, FinalCashFlowPosting::getDestination);
         return amountDest - amountSource;
     }
 
-    private static long computeAmount(List<FinalCashFlowPosting> finalCashFlow,
-                                      Function<FinalCashFlowPosting, FinalCashFlowAccount> func) {
+    private static long getAmount(List<FinalCashFlowPosting> finalCashFlow,
+                                  Function<FinalCashFlowPosting, FinalCashFlowAccount> func) {
         return finalCashFlow.stream()
                 .filter(f -> isMerchantSettlement(func.apply(f).getAccountType()))
                 .mapToLong(cashFlow -> cashFlow.getVolume().getAmount())

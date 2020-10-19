@@ -1,7 +1,5 @@
 package com.rbkmoney.absolutely.converter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rbkmoney.absolutely.AbsolutelyApplication;
 import com.rbkmoney.damsel.base.Content;
 import com.rbkmoney.damsel.domain.*;
@@ -50,29 +48,30 @@ public class PaymentConverterTest {
     private PaymentConverter paymentConverter;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private PaymentPayerConverter paymentPayerConverter;
 
     @Test
-    public void convertTest() throws JsonProcessingException {
+    public void convertTest() {
 
         String paymentId = "1";
         Invoice invoice = buildBankCardPayerInvoice(paymentId);
 
         Payment payment = (Payment) paymentConverter.convert(invoice, paymentId);
         assertEquals(invoice.getInvoice().getId(), payment.getInvoiceID());
-        InvoiceDetails details = invoice.getInvoice().getDetails();
-        assertEquals(details.getProduct(), payment.getInvoiceDetails().getProduct());
-        assertEquals(details.getDescription(), payment.getInvoiceDetails().getDescription());
-        assertEquals(details.getCart().getLines().size(), payment.getInvoiceDetails().getCart().size());
-        assertEquals(details.getCart().getLines().get(0).getPrice().getAmount(), (long) payment.getInvoiceDetails().getCart().get(0).getPrice());
-        assertEquals(details.getCart().getLines().get(0).getProduct(), payment.getInvoiceDetails().getCart().get(0).getProduct());
-        assertEquals(details.getCart().getLines().get(0).getQuantity(), (long) payment.getInvoiceDetails().getCart().get(0).getQuantity());
+
+        //check invoiceDetails equality
+        InvoiceDetails detailsSource = invoice.getInvoice().getDetails();
+        assertEquals(detailsSource.getProduct(), payment.getInvoiceDetails().getProduct());
+        assertEquals(detailsSource.getDescription(), payment.getInvoiceDetails().getDescription());
+        assertEquals(detailsSource.getCart().getLines().size(), payment.getInvoiceDetails().getCart().size());
+        assertEquals(detailsSource.getCart().getLines().get(0).getPrice().getAmount(), (long) payment.getInvoiceDetails().getCart().get(0).getPrice());
+        assertEquals(detailsSource.getCart().getLines().get(0).getProduct(), payment.getInvoiceDetails().getCart().get(0).getProduct());
+        assertEquals(detailsSource.getCart().getLines().get(0).getQuantity(), (long) payment.getInvoiceDetails().getCart().get(0).getQuantity());
         assertNotNull(payment.getInvoiceDetails().getMetadata());
         assertTrue(payment.getInvoiceDetails().getMetadata() instanceof Map);
         assertEquals(((Map) payment.getInvoiceDetails().getMetadata()).get("paper"), "A4");
+
+        //check payment equality
         InvoicePayment invoicePaymentSource = invoice.getPayments().get(0);
         com.rbkmoney.damsel.domain.InvoicePayment invoicePayment = invoicePaymentSource.getPayment();
         assertEquals(invoicePayment.getId(), payment.getId());
@@ -87,12 +86,13 @@ public class PaymentConverterTest {
         assertEquals(invoicePayment.getShopId(), payment.getShopID());
         assertEquals(invoicePayment.isMakeRecurrent(), payment.getMakeRecurrent());
         assertEquals(invoicePayment.getExternalId(), payment.getExternalID());
+
         assertEquals(invoicePaymentSource.getRoute().getProvider().getId(), (int)payment.getPaymentRoute().getProviderID());
         assertEquals(invoicePaymentSource.getRoute().getTerminal().getId(), (int)payment.getPaymentRoute().getTerminalID());
-        assertEquals(invoicePaymentSource.getSessions().get(0).getTransactionInfo().getId(), payment.getTransactionInfo().getId());
-        assertEquals(invoicePaymentSource.getSessions().get(0).getTransactionInfo().getAdditionalInfo().getRrn(), payment.getTransactionInfo().getRrn());
 
-        System.out.println(objectMapper.writeValueAsString(payment));
+        TransactionInfo transactionInfoSource = invoicePaymentSource.getSessions().get(0).getTransactionInfo();
+        assertEquals(transactionInfoSource.getId(), payment.getTransactionInfo().getId());
+        assertEquals(transactionInfoSource.getAdditionalInfo().getRrn(), payment.getTransactionInfo().getRrn());
     }
 
     @Test
@@ -106,6 +106,7 @@ public class PaymentConverterTest {
         assertEquals(sourcePayer.getPaymentResource().getResource().getClientInfo().getIpAddress(), paymentResourcePayer.getClientInfo().getIp());
         assertEquals(sourcePayer.getPaymentResource().getResource().getClientInfo().getFingerprint(), paymentResourcePayer.getClientInfo().getFingerprint());
         assertTrue(paymentResourcePayer.getPaymentTool() instanceof PaymentToolDetailsBankCard);
+
         PaymentTool paymentTool = sourcePayer.getPaymentResource().getResource().getPaymentTool();
         PaymentToolDetailsBankCard paymentToolConverted = (PaymentToolDetailsBankCard) paymentResourcePayer.getPaymentTool();
         assertEquals(paymentTool.getBankCard().getToken(), paymentToolConverted.getToken());

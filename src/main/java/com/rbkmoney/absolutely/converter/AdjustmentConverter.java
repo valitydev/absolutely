@@ -19,8 +19,8 @@ public class AdjustmentConverter {
         InvoicePaymentAdjustment adjustment = InvoiceUtils.extractAdjustment(invoicePayment, adjustmentId);
         var payment = invoicePayment.getPayment();
 
-        Long oldAmount = CashFlowUtils.computeMerchantAmount(adjustment.getOldCashFlowInverse());
-        Long newAmount = CashFlowUtils.computeMerchantAmount(adjustment.getNewCashFlow());
+        Long oldAmount = CashFlowUtils.getMerchantAmount(adjustment.getOldCashFlowInverse());
+        Long newAmount = CashFlowUtils.getMerchantAmount(adjustment.getNewCashFlow());
         long amount = newAmount + oldAmount;
 
         return new Adjustment()

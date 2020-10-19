@@ -14,6 +14,7 @@ import com.rbkmoney.swag.adapter.abs.model.PaymentRoute;
 import com.rbkmoney.swag.adapter.abs.model.RiskScore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class PaymentConverter {
     }
 
     private TransactionInfo getTransactionInfo(List<InvoicePaymentSession> sessions) {
-        return sessions.size() > 0 ? sessions.get(sessions.size() - 1).getTransactionInfo() : null;
+        return !CollectionUtils.isEmpty(sessions) ? sessions.get(sessions.size() - 1).getTransactionInfo() : null;
     }
 
     private PaymentRoute convertPaymentRoute(com.rbkmoney.damsel.domain.PaymentRoute route) {
