@@ -20,3 +20,36 @@ spring:
 info:
   version: '@project.version@'
   stage: dev
+
+kafka:
+  bootstrap-servers: kenny-kafka1.bst1.rbkmoney.net:9092
+  client-id: absolutely
+  ssl:
+    enabled: false
+    trust-store-location: "test"
+    trust-store-password: "test"
+    key-store-location: "test"
+    key-store-password: "test"
+    key-password: "test"
+    key-store-type: PKCS12
+    trust-store-type: PKCS12
+  consumer:
+    group-id: "AbsolutelyListener"
+    enable-auto-commit: false
+    auto-offset-reset: earliest
+    max-poll-records: 20
+    max-poll-interval-ms: 30000
+    session-timeout-ms: 30000
+    invoicing-concurrency: 7
+  topics:
+    invoice:
+      id: mg-invoice-100-2
+      enabled: false
+
+service:
+  invoicing:
+    url: http://hellgate:8022/v1/processing/invoicing
+    networkTimeout: 5000
+
+abs:
+  url: https://abs.ru/
